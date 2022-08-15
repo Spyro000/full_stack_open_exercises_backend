@@ -6,7 +6,7 @@ const cors = require("cors")
 const app = express()
 
 morgan.token('json', (req, res) => {
-    if (req.method === 'POST') {
+    if (req.method === 'POST' || req.method === 'PUT') {
         return JSON.stringify(req.body)
     }
     else {
@@ -81,6 +81,20 @@ app.post('/api/persons', (request, response) => {
     persons = persons.concat(person)
 
     response.json(person)
+})
+
+app.put('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const person = persons.find(person => person.id === id)
+    if (person) {
+        person.number = request.body.number
+        response.json(person)
+    }
+    else {
+        response.status(400).json({ error: `Name ${request.body.name} already deleted from phonebook` })
+        return
+    }
+
 })
 
 app.delete('/api/persons/:id', (request, response) => {
